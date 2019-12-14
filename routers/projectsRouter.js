@@ -20,6 +20,30 @@ router.get('', (req, res) => {
   });
 });
 
-
+// fetch a project by id
+router.get('/:id', (req, res) => {
+  // request a project by ID parameter
+  const project_id = req.params.id;
+  projects.get(project_id)
+    .then(project => {
+      // if project is found
+      if (project) {
+        // respond with 'OK' status code and the project
+        res.status(200).json(project)
+        // otherwise
+      } else {
+        // cancel, respond with 'not found' code and json message
+        return res.status(404).json({
+          message: 'The project with the specified ID does not exist.'
+        })
+      }
+    })
+    .catch(err => {
+      // if an error, respond with 'server error' code and json error message
+      res.status(500).json({
+        errorMessage: 'The project information could not be retrieved.'
+      })
+    });
+});
 
 module.exports = router;

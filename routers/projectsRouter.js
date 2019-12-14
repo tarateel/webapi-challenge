@@ -15,6 +15,7 @@ router.get('', (req, res) => {
   .catch(err => {
     // if an error, respond with 'server error' code and json error message
     res.status(500).json({
+      err: err,
       errorMessage: 'The projects information could not be retrieved.'
     })
   });
@@ -41,6 +42,7 @@ router.get('/:id', (req, res) => {
     .catch(err => {
       // if an error, respond with 'server error' code and json error message
       res.status(500).json({
+        err: err,
         errorMessage: 'The project information could not be retrieved.'
       })
     });
@@ -70,6 +72,7 @@ router.post('/', (req, res) => {
     .catch(err => {
       // if an error, respond with 'server error' code and json error message
       res.status(500).json({
+        err: err,
         errorMessage: 'There was an error while saving the project to the database.'
       })
     })
@@ -85,19 +88,54 @@ router.put('/:id', (req, res) => {
   // request to update id & changes to be made parameters
   projects.update(id, changes)
     .then(project => {
+      // if project is found with the requested id
       if (project) {
+        // respond with 'OK' code and the resulting changes
         res.status(200).json(changes)
+        // if project is nout found
       } else {
         res.status(404).json({
+          // respond with 'not found' code and json message
           errorMessage: 'The project with the specified ID does not exist.'
         })
       }
     })
     // if there is an error updating project,
     .catch(err => {
-      // return 'internal server error' code and json error message
+      // return 'server error' code and json error message
       res.status(500).json({
+        err: err,
         errorMessage: 'The project information could not be modified.'
+      })
+    });
+});
+
+// remove(): the remove method accepts an id as its first parameter and, upon successfully deleting the resource from the database, returns the number of records deleted.
+router.delete('/:id', (req, res) => {
+  // define id by parameter
+  const { id } = req.params
+  // request to remove project with the specified id
+  projects.remove(id)
+    .then(projectToBeDeleted => {
+      // if project is found and then successfully deleted
+      if (projectToBeDeleted) {
+        // respond in console and with 'OK' code and json message 
+        console.log("One record successfully deleted.");
+        res.status(200).json({
+          message: "One record successfully deleted."
+        });
+        // otherwise
+      } else {
+        // respond with 'not found' code and json message
+        res.status(404).json({
+          errorMessage: 'The project with the specified ID does not exist.'
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        err: err,
+        errorMessage: 'The project could not be removed.'
       })
     });
 });

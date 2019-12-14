@@ -46,4 +46,34 @@ router.get('/:id', (req, res) => {
     });
 });
 
+// insert(): calling insert passing it a resource object will add it to the database and return the newly created resource.
+// name	string	required.
+// description	string	required.
+// completed	boolean	used to indicate if the project has been completed, not required
+router.post('/', (req, res) => {
+  // define name and description as request body
+  const { name, description } = req.body;
+  // if title or description are missing
+  if (!name || !description) {
+    // respond with 'bad request' status code and json error message
+    res.status(400).json({
+      errorMessage: 'A name and description are both required to add a project.'
+    })
+    //otherwise
+  } else {
+    // insert new project
+    projects.insert(req.body)
+    .then(project => {
+      // and respond with 'created' code' and the new post
+      res.status(201).json(project)
+    })
+    .catch(err => {
+      // if an error, respond with 'server error' code and json error message
+      res.status(500).json({
+        errorMessage: 'There was an error while saving the project to the database.'
+      })
+    })
+  };
+});
+
 module.exports = router;

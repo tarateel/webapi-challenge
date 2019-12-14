@@ -1,11 +1,14 @@
 const express = require('express');
 
 const projects = require('../data/helpers/projectModel');
+const actionsRouter = require('./actionsRouter');
 
 const router = express.Router();
 
+router.use('/:id/actions', actionsRouter);
+
 // get(): resolves to an array of all the resources contained in the database. If you pass an id to this method it will return the resource with that id if one is found.
-router.get('', (req, res) => {
+router.get('/', (req, res) => {
   // request an array of all projects in the db
   projects.get()
   .then(projects => {

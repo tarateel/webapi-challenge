@@ -113,4 +113,28 @@ router.put('/:actionId', (req, res) => {
   })
 })
 
+// remove(): the remove method accepts an id as it's first parameter and, upon successfully deleting the resource from the database, returns the number of records deleted.
+router.delete('/:actionId', (req, res) => {
+  const { id } = req.params
+  projects.remove(id)
+    .then(actionToDelete => {
+      if (actionToDelete) {
+        console.log("One record successfully deleted.");
+        res.status(200).json({
+          message: "One record successfully deleted."
+        });
+      } else {
+        res.status(404).json({
+          message: 'The requested action does not exist.'
+        })
+      }
+    })
+    .catch(err => {
+      res.status(500).json({
+        err: err,
+        message: 'The project could not be removed.'
+      })
+    })
+})
+
 module.exports = router;

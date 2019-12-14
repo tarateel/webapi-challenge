@@ -55,7 +55,7 @@ router.get('/:actionId', (req, res) => {
 router.post('/', (req, res) => {
   // variable using project parameters and all data in the request body
   const actionData = { ...req.body, project_id: req.params.id };
-  
+
   // validate data
   const description = req.body.description;
   const notes = req.body.notes;
@@ -88,5 +88,29 @@ router.post('/', (req, res) => {
   } 
 });
 
+// update(): accepts two arguments, the first is the id of the resource to update, and the second is an object with the changes to apply. It returns the updated resource. If a resource with the provided id is not found, the method returns null.
+
+router.put('/:actionId', (req, res) => {
+  const changes = req.body;
+  const { project_id, description, notes } = req.body;
+  const { id } = req.params;
+
+  actions.update(id, changes)
+  .then(action => {
+    if (action) {
+      res.status(200).json(changes)
+    } else {
+      res.status(404).json({
+        message: 'The project with the specified ID does not exist.'
+      })
+    }
+  })
+  .catch(err => {
+    res.status(500).json({
+      err: err,
+      errorMessage: 'The action information could not be modified.'
+    })
+  })
+})
 
 module.exports = router;

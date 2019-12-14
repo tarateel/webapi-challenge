@@ -31,6 +31,21 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/:actionId', (req, res) => {
+  // request action by project id and action id parameters
+  actions.get(req.params.id, req.params.actionId)
+  .then(action => {
+    // return 'OK' code and the actions on the specified project
+    res.status(200).json(action)
+  })
+  .catch(err => {
+    // if an error, respond with 'server error' code and json error message
+    res.status(500).json({
+      err: err,
+      errorMessage: 'The requested action could not be retrieved.'
+    })
+  });
+});
 
 
 module.exports = router;

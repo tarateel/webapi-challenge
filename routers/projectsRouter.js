@@ -34,7 +34,7 @@ router.get('/:id', (req, res) => {
       } else {
         // cancel, respond with 'not found' code and json message
         return res.status(404).json({
-          message: 'The project with the specified ID does not exist.'
+          errorMessage: 'The project with the specified ID does not exist.'
         })
       }
     })
@@ -74,6 +74,32 @@ router.post('/', (req, res) => {
       })
     })
   };
+});
+
+// update(): accepts two arguments, the first is the id of the resource to update, and the second is an object with the changes to apply. It returns the updated resource. If a resource with the provided id is not found, the method returns null.
+router.put('/:id', (req, res) => {
+  // define request body and id
+  const changes = req.body;
+  const { name, description } = req.body;
+  const { id } = req.params;
+  // request to update id & changes to be made parameters
+  projects.update(id, changes)
+    .then(project => {
+      if (project) {
+        res.status(200).json(changes)
+      } else {
+        res.status(404).json({
+          errorMessage: 'The project with the specified ID does not exist.'
+        })
+      }
+    })
+    // if there is an error updating project,
+    .catch(err => {
+      // return 'internal server error' code and json error message
+      res.status(500).json({
+        errorMessage: 'The project information could not be modified.'
+      })
+    });
 });
 
 module.exports = router;

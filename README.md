@@ -40,13 +40,28 @@ Demonstrate your understanding of this Sprint's concepts by answering the follow
 
 - [ ] Mention two parts of Express that you learned about this week.
 
+Server-side routing and the use of middleware
+
 - [ ] Describe Middleware?
+
+A function that is invoked by the Express routing layer before the final request handler, and thus sits in the middle between a raw request and the final intended route
 
 - [ ] Describe a Resource?
 
+ A resource is an object with a type, associated data, relationships to other resources, and a set of methods that operate on it
+
 - [ ] What can the API return to help clients know if a request was successful?
 
+HTTP success codes:
+  200 (OK)
+  201 (Created)
+  202 (Accepted)
+  204 (No Content)
+As well as a response message, a successful post, etc.
+
 - [ ] How can we partition our application into sub-applications?
+
+Setting up separate routes according to logic and functionality
 
 ## Minimum Viable Product
 

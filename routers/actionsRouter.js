@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
 // fetch a specific action
 router.get('/:actionId', (req, res) => {
   // request action by project id and action id parameters
-  actions.get(req.params.id, req.params.actionId)
+  actions.get(req.params.actionId)
   .then(action => {
     // return 'OK' code and the actions on the specified project
     res.status(200).json(action)

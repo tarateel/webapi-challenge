@@ -5,6 +5,9 @@ const express = require('express');
 const projects = require('../data/helpers/projectModel');
 const actions = require('../data/helpers/actionModel');
 
+const { validateProjectId } = require('../middleware/validateProject');
+const { validateAction } = require('../middleware/validateAction');
+
 // router handler
 const router = express.Router({
   mergeParams: true
@@ -34,7 +37,7 @@ router.get('/', (req, res) => {
 // fetch a specific action
 router.get('/:actionId', (req, res) => {
   // request action by project id and action id parameters
-  actions.get(req.params.id, req.params.actionId)
+  actions.get(req.params.actionId)
   .then(action => {
     // return 'OK' code and the actions on the specified project
     res.status(200).json(action)
@@ -52,40 +55,19 @@ router.get('/:actionId', (req, res) => {
 // project_id	number	required, must be the id of an existing project.
 // description	string	up to 128 characters long, required.
 // notes	string	no size limit, required. Used to record additional notes or requirements to complete the action.
-router.post('/', (req, res) => {
-  // variable using project parameters and all data in the request body
-  const actionData = { ...req.body, project_id: req.params.id };
-
-  // validate data
+router.post('/', validateProjectId(), validateAction(), (req, res) => {
   const description = req.body.description;
   const notes = req.body.notes;
-  const project_id = req.params.id;
-
-  if (!description || !notes) {
-    res.status(400).json({
-      message: 'A description and notes are both required to create a new action.'
+  actions.insert(req.body)
+  .then(action => {
+    res.status(201).json(action)
+  })
+  .catch(err => {
+    res.status(500).json({
+      err: err,
+      errorMessage: 'there was an error while saving the action to the database.'
     })
-  } else if (description.length > 128) {
-    res.status(400).json({
-      message: 'Description cannot be longer than 128 characters.'
-    })
-  } else {
-    actions.insert(actionData)
-    .then(actionData => {
-      if (!project_id) {
-        res.status(404).json({
-          message: "The project with the specified id does not exist."
-        })
-      } else {
-        res.status(201).json(actionData);
-      }
-    })
-    .catch(err => {
-      res.status(500).json({
-        errorMessage: 'There was an error while saving the action to the database.'
-      })
-    })
-  } 
+  })
 });
 
 // update(): accepts two arguments, the first is the id of the resource to update, and the second is an object with the changes to apply. It returns the updated resource. If a resource with the provided id is not found, the method returns null.

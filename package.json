@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/LambdaSchool/webapi-challenge#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "helmet": "^3.21.2",
     "knex": "^0.20.4",
     "morgan": "^1.9.1",
